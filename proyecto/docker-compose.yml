@@ -14,6 +14,18 @@ services:
       MYSQL_PASSWORD: 'sloth'
       MYSQL_ROOT_PASSWORD: 'sloth'
       MYSQL_ROOT_PASSWORD: 'sloth'
+  dash:
+    container_name: app
+    build: 
+      context: .
+      dockerfile: DockerfileDash
+    volumes:
+      - ./sql-data/dash:/code
+    depends_on:
+      - mysql
+    ports:
+      - "80:8080"
+    command: python app.py
   jupyter:
     container_name: notebook
     build: 
@@ -25,15 +37,3 @@ services:
       - mysql
     ports:
       - "8888:8888"
-  dash:
-    container_name: app
-    build: 
-      context: .
-      dockerfile: DockerfileDash
-    volumes:
-      - ./sql-data/dash:/code
-    links:
-      - "mysql:sql"
-    ports:
-      - "80:8080"
-    command: python app.py
