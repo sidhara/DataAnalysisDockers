@@ -1,0 +1,39 @@
+version: '3.3'
+services:
+  mysql:
+    container_name: sql
+    image: mysql
+    volumes:
+      - ./sql-data/db:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    hostname: R8WA
+    environment:
+      MYSQL_DATABASE: 'database'
+      MYSQL_USER: 'sloth'
+      MYSQL_PASSWORD: 'sloth'
+      MYSQL_ROOT_PASSWORD: 'sloth'
+      MYSQL_ROOT_PASSWORD: 'sloth'
+  jupyter:
+    container_name: notebook
+    build: 
+      context: .
+      dockerfile: DockerfileJupyter
+    volumes:
+      - ./sql-data/jupyter:/home/jovyan/work
+    depends_on: 
+      - mysql
+    ports:
+      - "8888:8888"
+  dash:
+    container_name: app
+    build: 
+      context: .
+      dockerfile: DockerfileDash
+    volumes:
+      - ./sql-data/dash:/code
+    links:
+      - "mysql:sql"
+    ports:
+      - "80:8080"
+    command: python app.py
